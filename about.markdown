@@ -38,7 +38,7 @@ This tree secretly collects and reports health information of people.
 - Implement Firebase Offline Support and Firebase Cloud Firestore Management
 
 ### Version 3.0.1 (2019 - present) Underdevelopment
-<!-- - Migration to AndroidX (Library of Android Jetpack) instead of Android Support Library Version 27.1.1 to AndroidX Version 1.0.0
+- Migration to AndroidX (Library of Android Jetpack) instead of Android Support Library Version 27.1.1 to AndroidX Version 1.0.0
     
     |Component |New Library with AndroidX|Old Library|
     |---|---|---|
@@ -48,7 +48,7 @@ This tree secretly collects and reports health information of people.
     |Card View|`androidx.cardview:cardview:1.0.0`|`com.android.support:cardview-v7:27.1.1`|
     |Vector Drawable|`androidx.vectordrawable:vectordrawable:1.0.0`|`com.android.support:support-vector-drawable:27.1.1`|
     |Animated Drawable|`androidx.vectordrawable:vectordrawable-animated:1.0.0`|`com.android.support:animated-vector-drawable:27.1.1`|
-    |ConstraintLayout|`androidx.constraintlayout:constraintlayout:2.0.0-beta3`|`com.android.support.constraint:constraint-layout:1.1.2`| -->
+    |ConstraintLayout|`androidx.constraintlayout:constraintlayout:2.0.0-beta3`|`com.android.support.constraint:constraint-layout:1.1.2`|
 
 - Develop Analysis Model (Under Construction)
 - Developer: Theethawat Savastham
