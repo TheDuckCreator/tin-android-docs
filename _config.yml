@@ -24,7 +24,7 @@ description: >- # this means to ignore newlines until "baseurl:"
   This is the part of Project E-health for Personal Sensor Application (Android Application).
    I has prepare my android skill for this project, the docs will be in Thai and English 
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "www.theduckcreator.in.th/tin-android-docs" # the base hostname & protocol for your site, e.g. http://example.com
+url: "" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: jekyllrb
 github_username:  theethawat
 remote_theme: pmarsceill/just-the-docs
