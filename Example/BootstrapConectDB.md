@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  Boostrap Database Connection
+title: Room DB Connect Example
 ---
 # Example for Bootstraper Database Connection
 ## Example 1
