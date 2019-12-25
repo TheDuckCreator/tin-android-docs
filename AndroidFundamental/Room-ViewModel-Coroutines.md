@@ -33,7 +33,6 @@ title: Room Database and ViewModel
 
         val sleepTrackerViewModel = ViewModelProviders.of(this,viewModelFactory).get(SleepTrackerViewModel::class.java)
 
-
 ## Job, Scope and Dispatcher Preparing
 
 จากที่ได้กล่าวไว้ในเรื่อง Coroutines ว่า จะมีส่วนที่สำคัญ 3 ส่วนคือ Job, Scope และ Dispatcher ขั้นตอนเริ่มแรกคือ การกำหนดสิ่งที่เราจะให้มันทำใน Coroutines หรือ Multithreading Scenario คืออะไร เมื่อเราต้องการเริ่มหรือหยุด Coroutines เราสามารถจัดการกับมันได้ผ่านตัวแปรตัวนี้
@@ -50,3 +49,23 @@ Override Function `onCleard()` ไว้ด้วย
             super.onCleared()
             viewModelJob.cancel()
         }
+
+### Make UI Scope
+
+สร้าง UI Scope สำหรับ Coroutines เพื่อให้ Coroutine รู้ว่าตัวมันต้องรันบน Thread ใด แล้วก็ต้องบอก Coroutine ด้วยว่าจะมี Job อะไร โดยพารามิเตอร์ของการสร้าง Scope คือ ใส่ Dispatcher และ Job ลงไป
+
+        private val uiScope = CoroutineScope(Dispatcher.Main + viewModelJob)
+
+## Lauching Your Scope
+
+หลังจากตั้งค่าตัวแปรต่าง ๆ ครบแล้ว จากนั้นเราจะเริ่มเรียกใช้ข้อมูลจากฐานข้อมูลดยเริ่มจาก
+
+### LiveData Variable Declare
+
+เพื่อให้ได้ประสิทธิภาพ เราจะเก็บข้อมูลที่ได้มาจาก Database ในรูปของ LiveData โดยสามารถจัดอยู่ในแบบง่าย ๆ คือ `MutableLiveData<>()` แต่มันจะสามารถแก้ไขได้ง่าย โดยสามารถเลี่ยงไปใช้ตัวแปรแบบ `LiveData<>()` แทนก็ได้ และใช้ Backing Property ช่วย โดยในที่นี้จะใช้ MutableLiveData ธรรมดาก่อน
+
+    private var tonight = MutableLiveData<SleepNight?>()
+
+### Let Start
+
+หลังจากเราได้ LiveData อันเป็นที่เก็บของข้อมูลที่เราต้องการดึงจากฐานข้อมูลแล้วนั้น
