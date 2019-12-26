@@ -66,6 +66,54 @@ Override Function `onCleard()` ไว้ด้วย
 
     private var tonight = MutableLiveData<SleepNight?>()
 
-### Let Start
+### Start Coroutines and LiveData
 
-หลังจากเราได้ LiveData อันเป็นที่เก็บของข้อมูลที่เราต้องการดึงจากฐานข้อมูลแล้วนั้น
+หลังจากเราได้ LiveData อันเป็นที่เก็บของข้อมูลที่เราต้องการดึงจากฐานข้อมูลแล้วนั้น เราก็จะเรียกค่าจาก Database เพื่อเข้ามาเก็บไว้ในตัวแปร LiveData นั้น ซึ่งในตรงนี้จะมีการทำงาน ที่ใช้หลัก Blocking ไม่ดีนัก ต้องใช้หลักของ Coroutines ดังนั้นตรงนี้ จะเป็นการ เรียกใช้ หรือ Implement ในส่วนของ Coroutines ด้วย
+
+- เรียกใช้ฟังก์ชันที่จะใช้เข้าถึง LiveData ซึ่งเกี่ยวข้องกับ Coroutines ตังแต่ scope `init{}` หรือ Constructor ของ class เช่น เราจะเรียกให้ Coroutine ทำงานในฟังก์ชัน `initializeTonight()` เราก็เรียกฟังก์ชันนี้ใน init
+
+        init{
+                initializeTonight()
+        }
+
+- หลังจากนั้น เราก็ต้อง declare function ลงใน class นี้ โดยการเขียนฟังก์ชันที่จะให้มันทำงานใน Coroutines นั้นไม่เหือนกับฟังก์ชันธรรมดาทั่วไป เราจะต้องเอา Scope ที่เราเคยกำหนดไว้มาเป็นตัวเริ่ม กล่าวคือ LiveData Coroutine จะรันบน Scope เราก็ต้องบอก Scope ก่อน เพราะเราเริ่มคำลั่งตอน Init คือเริ่มต้นเริ่ม Class แต่จริง ๆ เรายังไม่ได้ต้องการให้มันเริ่มตอนนั้น เราจะให้เริ่มต้น uiScope ของเราพร้อม ไม่งั้นมันก็ไม่รู้
+
+        private fun initializeTonight(){
+                uiScope.launch{
+                        tongiht.value = getTonightFromDatabase()
+                }
+        }
+
+### Put Data out form Database
+
+เราได้เตรียมค่าที่จะใช้ในการเก็บข้อมูล ซึ่งเก็บอยู่ในรูปของ LiveData เรียบร้อยแล้ว คือ ให้ค่าของมันเป็น `getTonightFromDatabase()` ซึ่งเรายังไม่ได้ Implement Function ดังกล่าว
+
+- Implement ฟังก์ชัน ในการจะ Implement นั้น ในการรันผ่าน Coroutines ซึ่งมันเป็นแบบ Asynchronous นั้น เราก็จะไม่สั่งฟังก์ชันให้ทำงานเป็นบล็อก ๆ แต่เราจะใช้หลักการของ Suspend Function แทน เพราะว่าถ้าหากไม่มีข้อมูล ไม่มีอะไรพร้อมให้มันทำงาน มันจะได้ไม่ต้องทำงาน
+
+        private suspend fun getTonightFromDatabase:SleepNight?{}
+
+- ให้ฟังก์ชันนั้นส่งค่าออกมา ซึ่งแน่นอนว่าคงจะไม่สามารถส่งออกแบบธรรมดาได้ มันต้องส่งแบบขึ้นกับสถานะการณ์ ในสถานการณ์ของ Database นี้ จัดเป็นส่วนหนึ่งที่ทำบน I/O การ return แบบนี้เราจะใช้ `return WithContext(){}` ในที่นี้ Context ของเราคือ Dispatchers.IO จะได้เป็น
+
+        return withContext(Dispatchers.IO){
+                var night = database.getTonight()
+                if (night?.endTimeMilli != night?.startTimeMilli) {
+                        night = null
+                }
+                night
+        }
+
+ท้ายที่สุดแล้ว เราจะได้หลักการคร่าว ๆ ของการทำงานของโปรแกรม แบบ Database + Coroutines ตามตัวอย่างที่ Google Codelabs ให้มาดังนี้
+
+        fun someWorkNeedsToBeDone {
+                uiScope.launch {
+                        suspendFunction()
+                }
+        }
+
+        suspend fun suspendFunction() {
+                withContext(Dispatchers.IO) {
+                        longrunningWork()
+                }
+        }
+
+ขอบคุณโค้ดเฉลยจาก Google Codelabs Code of this if a copy from [Google Codelabs Android Kotlin Fundamentals 06.2 Coroutines and Room](https://codelabs.developers.google.com/codelabs/kotlin-android-training-coroutines-and-room/index.html?index=..%2F..android-kotlin-fundamentals#5)
