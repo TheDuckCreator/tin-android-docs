@@ -81,3 +81,26 @@ Hold Data ลงในตำแหน่งที่เหมาะสมใน 
         }
 
 ## Add Adapter to Fragmemt
+
+ถึงแม้เราจะลาก RecyclerView ลงมาใน Layout File แล้ว แต่เราก็จะต้องจัดการ View ของมัน ในไฟล์ Fragment.kt ของเรา เพื่อที่จะบอกว่า Adpter ที่อยู่ตรงนี้ จะให้ Adpter ตัวนี้ เข้าไปทำงาน
+
+        val adapter = SleepNightAdapter()
+        binding.sleepList.adapter = adapter
+
+## Add Data to Adapter
+
+และขั้นตอนสุดท้าย คือ การใส่ data ของเราลงไปใน Adapter เพราถ้าเราไม่ใส่ Data ลงไป มันก็ไม่รู้จะแสดงอะไร เราจะ้หลักการของการดึงข้อมูลจาก DAO แล้วใช้ Observer Pattern ใน LiveData เป็นสิ่งที่ไปบอกว่าตอนนี้มีการทำงานนะ มีข้อมูลเปลี่ยนแปลงนะ และนำค่านี้ เข้าสู่ Adapter
+
+เราจะสร้างตัวแปรของข้อมูลใน ViewModel File , ต้อง Make sure ด้วยว่า เราทำให้มันไม่เป็น `private` เพราะเราจะใช้ class อื่น ในการเรียกมันไป
+
+        val nights = database.getAllNights()
+
+และเราจะเรียก Callback function ของตัวแปรนี้ ซึ่งอยู่ใน ViewModel ใน Fragment Class ให้ทำงานตาม `viewLifecycleOwner`
+
+        sleepTrackerViewModel.nights.observe(viewLifecycleOwner,Observer{
+            it?let{
+                adapter.data = it
+            }
+        })
+
+โดยต้องอย่าลืมที่จะประกาศตัวแปรของ ViewModel ในหน้าของ Fragment ด้วย
